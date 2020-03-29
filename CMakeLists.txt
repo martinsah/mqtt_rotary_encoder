@@ -14,3 +14,6 @@ ADD_EXECUTABLE( mqtt_pigpio mqtt_pigpio.cpp rotary_encoder.cpp)
 
 TARGET_LINK_LIBRARIES( test_rotary_encoder ${pigpio_LIBRARY} Boost::chrono Boost::thread PahoMqttCpp::paho-mqttpp3 )
 TARGET_LINK_LIBRARIES( mqtt_pigpio ${pigpio_LIBRARY} Boost::program_options Boost::chrono Boost::thread PahoMqttCpp::paho-mqttpp3 )
+
+install(TARGETS mqtt_pigpio DESTINATION bin)
+
