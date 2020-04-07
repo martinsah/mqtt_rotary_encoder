@@ -75,8 +75,10 @@ void rotary_encoder_callback(int way)
     double velstep = velocity * 1/seconds;
     if(velstep < 1.0)
         velstep = 1;
+    
     int b = way * floor(velstep);
-    rotary_encoder_ticks -= b;
+    if(std::abs(b) < 30)
+        rotary_encoder_ticks -= b;
 //  std::cout << "\nvel=" << 1/seconds << ", way= " << way << ", step= " << b << ", pos=" << rotary_encoder_ticks;
 
 }
@@ -215,29 +217,34 @@ int main(int ac, char **av)
         //std::atomic_exchange(&rotary_encoder_ticks,b);
         if(b != 0){
             pub_topic1.publish(std::to_string(b));
-            std::cout << "\n" << topic1 << " " << b;
+            if(verbose)
+                std::cout << "\n" << topic1 << " " << b;
         }
         if(cli.try_consume_message(&mqtt_msg)){
             std::string topic = mqtt_msg->get_topic();
             std::string payload = mqtt_msg->to_string();
             if(topic == pwm1topic){
                 double elapsed = wdt_pwm1.toc();
-                std::cout << "t=" << elapsed << ", pwm1=" << payload << std::endl;
+                if(verbose)
+                    std::cout << "t=" << elapsed << ", pwm1=" << payload << std::endl;
                 pwmgen1(std::stod(payload));
             }
             if(topic == pwm2topic){
                 double elapsed = wdt_pwm2.toc();
-                std::cout << "t=" << elapsed << ", pwm2=" << payload << std::endl;
+                if(verbose)
+                    std::cout << "t=" << elapsed << ", pwm2=" << payload << std::endl;
                 pwmgen2(std::stod(payload));
             }
         }
         if(wdt_pwm1.read() > wdt){
-            std::cout << "\nwdt_pwm1 timeout";
+            if(verbose)
+                std::cout << "\nwdt_pwm1 timeout";
             pwmgen1(0);
             wdt_pwm1.toc();
         }
         if(wdt_pwm2.read() > wdt){
-            std::cout << "\nwdt_pwm2 timeout";
+            if(verbose)
+                std::cout << "\nwdt_pwm2 timeout";
             pwmgen2(0);
             wdt_pwm2.toc();
         }
