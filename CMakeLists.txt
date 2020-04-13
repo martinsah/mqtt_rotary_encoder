@@ -17,3 +17,5 @@ TARGET_LINK_LIBRARIES( mqtt_pigpio ${pigpio_LIBRARY} Boost::program_options Boos
 
 install(TARGETS mqtt_pigpio DESTINATION bin)
 
+install(FILES mqtt_pigpio.service DESTINATION /etc/systemd/system/ OPTIONAL)
+
